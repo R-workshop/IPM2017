@@ -1,0 +1,122 @@
+Standard Error
+========================================================
+author: Hamed Seyed-allaei
+date: 
+autosize: true
+
+Simulating reality
+========================================================
+
+We simulate a hypothetical experiment. 
+The result of the experiment are some random numbers, uniformly distributed between 0 and 1.
+
+We calculate the mean of this variable. Now this is the question:
+
+**How much error we will have depending on the sample size?**
+
+You have seen the math already, but let see it in practice. 
+
+*The choice of a non-normal distribution is deliberate.*
+
+
+Lets take some random numbers
+=============================
+Lets take 5 numbers and calculate their mean:
+```{r}
+r = runif(5,min=0,max=1)
+mean(r)
+```
+Lets do it for 50 numbers:
+```{r}
+r = runif(50,min=0,max=1)
+mean(r)
+```
+The true mean is 0.5. Which one is closer?
+
+If we repeat the experiment
+===========================
+Lets repeat the experiment of 5 measurements 1000 times:
+```{r}
+n=5 # The measurments in an experiment. 
+m=10000 # Repeatition of the experiment. 
+means=numeric(m) # We store means here. 
+for(i in 1:m){ # start of loop
+    means[i] = mean(runif(n,min=0,max=1)) #The experiment.
+} # end of loop
+```
+
+Histogram of menas
+==================
+```{r hist_of_means, echo=F}
+hist(means, freq=FALSE)
+x = seq(min(means),max(means),0.01)
+lines(x, dnorm( x,mean=mean(means),sd=sd(means)), col="red")
+```
+
+The distribution depends on sample size
+=======================================
+```{r pdf_n, echo=F}
+m<-10000
+means<-numeric(m)
+plot(c(0,1),c(0,15),type="n", xlab="Mean", ylab="Density")
+for(n in seq(3,100,10)){
+	for(i in 1:m){
+		means[i] <- mean(runif(n,min=0,max=1))
+	}
+	h <- hist(means, plot=FALSE)
+	points(h$mids, h$density,type="l")
+}	
+
+```
+
+
+Standard deviation of means
+===========================
+```{r sd_of_means, echo=F}
+m<-10000
+means<-numeric(m)
+plot(c(1,100),c(0.02,0.2),type="n", xlab="n", ylab="SD")
+for(n in seq(3,100,10)){
+	for(i in 1:m){
+		means[i] <- mean(runif(n,min=0,max=1))
+	}
+	points(n,sd(means))
+}	
+```
+
+Log-log plot
+===========================
+```{r sd_of_means_log, echo=F}
+m<-10000
+means<-numeric(m)
+plot(c(2,100),c(0.02,0.2),type="n", xlab="n", ylab="SD", log="xy")
+for(n in seq(3,100,10)){
+	for(i in 1:m){
+		means[i] <- mean(runif(n,min=0,max=1))
+	}
+	points(n,sd(means))
+}	
+x = seq(2,120,10)
+lines(x, 0.3/sqrt(x),col="red")
+
+```
+
+Conclusion
+==========
+If you repeat an experiments, the standard deviation of means ($\sigma_N$) is:
+
+$$\sigma_N \approx \frac{\sigma}{\sqrt{N}}$$
+$\sigma$ is the standard deviation of the original distribution (here it was uniform), not the means (which was normal).
+
+**That is central limit theorem!**
+
+
+Standard Error
+==============
+$$SE = \frac{\sigma}{\sqrt{N}}$$
+
+![SE](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Standard_deviation_diagram.svg/800px-Standard_deviation_diagram.svg.png)
+
+Change the distribution from uniform to anything else
+=====================================================
+and see if you can break this.
