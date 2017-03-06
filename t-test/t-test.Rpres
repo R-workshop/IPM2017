@@ -1,0 +1,101 @@
+t-test
+========================================================
+author: Hamed Seyed-allaei
+date: 
+autosize: true
+
+We have 2 population
+========================================================
+
+``` {r}
+mu1 = 0
+mu2 = 0
+sd1 = 1
+sd2 = 1
+```
+
+We take some random samples
+========================================================
+```{r}
+x1 = rnorm(10, mean = mu1, sd=sd1)
+x2 = rnorm(10, mean = mu2, sd=sd2)
+```
+
+Box plot will be
+================
+```{r}
+boxplot(x1,x2)
+```
+
+Are the means equal?
+================
+
+$$ \mu_1 = \mu_2$$
+
+$$ \mu_1 \ne \mu_2$$
+
+```{r}
+mean(x1)
+mean(x2)
+```
+*In respect to what?*
+
+t
+================
+We define $t$ as
+$$t =  \frac{\mu_1 - \mu_2}{SE_{\mu_1 - \mu_2}}$$
+
+Now the problem is how to calculate $SE_{\mu_1 - \mu_2}$.
+
+If $C = A - B$ and $A$ and $B$ are independent, then $\sigma_C^2 = \sigma_A^2 + \sigma_B^2$; therefore, 
+$$SE_{\mu_1-\mu_2} = \sqrt{(\frac{\sigma_1^2}{N_1} + \frac{\sigma_2^2}{N_2})}$$
+
+
+
+t-test
+======
+```{r}
+t.test(x1,x2)
+```
+
+t-test
+======
+```{r}
+mu1 = 0; mu2 = 1; 
+sd1 = 1; sd2 = 1
+x1 = rnorm(30, mean = mu1, sd=sd1)
+x2 = rnorm(30, mean = mu2, sd=sd2)
+t.test(x1,x2)
+```
+
+Paired samples
+==============
+We have measured the blood glucose level of some patients before and after drug administraino. 
+We want to see if the drug has any effects. 
+
+*the condition of independence is not true any more*
+
+Paired samples
+==============
+If $C = A - B$ and $A$ and $B$ correlates, then 
+
+$$\sigma_c^2 = \sigma_A^2 + \sigma_B^2 - 2 covar(A,B)$$
+
+```{r}
+mu1 = 0; mu2 = 1; 
+sd1 = 1; sd2 = 1
+x1 = rnorm(20, mean = mu1, sd=sd1)
+x2 = x1 + rnorm(20, mean = mu2, sd=sd2)
+```
+
+Paired samples
+==============
+```{r}
+t.test(x1,x2)
+```
+
+Paired samples
+==============
+```{r}
+t.test(x1,x2, paired = T)
+```
