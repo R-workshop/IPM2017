@@ -29,7 +29,7 @@ mean(r)
 ```
 
 ```
-[1] 0.4322367
+[1] 0.4225796
 ```
 Lets do it for 50 numbers:
 
@@ -39,7 +39,7 @@ mean(r)
 ```
 
 ```
-[1] 0.5245183
+[1] 0.5724131
 ```
 The true mean is 0.5. Which one is closer?
 
