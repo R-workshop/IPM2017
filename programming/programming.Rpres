@@ -4,9 +4,6 @@ author: Hamed Seyed-allaei
 date: 
 autosize: true
 
-![](https://upload.wikimedia.org/wikipedia/commons/0/0f/Ada_lovelace.jpg)
-
-
 Algorithm
 =========
 
@@ -45,7 +42,7 @@ if(x>0){
 }
 ```
 
-loops
+Loops
 =====
 ```{r}
 for(i in 1:2){
@@ -86,6 +83,12 @@ for(i in 1:5){
 }
 ```
 
+Loops can kill!
+===============
+*Q. How did the programmer die in the shower?*
+
+*A. He read the shampoo bottle instructions: Lather. Rinse. Repeat.*
+
 Fibonacci
 ==========
 
@@ -114,7 +117,7 @@ same(2,2)
 
 Exercise 
 ========
-**Produce 10th number in Fibonacci series, using for loop.**
+**Produce 10th number in Fibonacci series, using recursion.**
 ```{r}
 fib = function(n){
   f=0
@@ -128,3 +131,100 @@ fib = function(n){
 fib(8)
 ```
 
+Spike-Triggered Average
+=======================
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Illustration_diagram_for_the_Spike-triggered_average.pdf/page1-857px-Illustration_diagram_for_the_Spike-triggered_average.pdf.jpg)
+
+Retinal ganglion cell
+=====================
+
+![](https://upload.wikimedia.org/wikipedia/commons/3/38/Gray882.png)
+
+Install and load R.matlab
+=========================
+```{r}
+#install.packages("R.matlab")
+library(R.matlab)
+```
+Load data
+=========
+```{r}
+ganglion = readMat("ganglion.mat")
+summary(ganglion)
+dim(ganglion$counts)
+dim(ganglion$stim)
+```
+
+Stimuli 
+============
+```{r stim}
+image(ganglion$stim[,,3])
+```
+
+Spike counts
+============
+```{r counts}
+hist(ganglion$counts, breaks = -1:8)
+```
+
+Spike-Triggered Average
+=======================
+
+$${\mathrm  {STA}}={\tfrac  {1}{n_{{sp}}}}\sum _{{i=1}}^{T}y_{i}{\mathbf  {x_{i}}},$$
+
+${\mathbf  {x_{i}}}$: Stimulus $i$. 
+
+$y_i$: Spike count.
+
+Spike-Triggered Average
+================
+```{r}
+s = ganglion$stim[,,1] * 0 
+for(j in 1:(length(ganglion$counts)-i)){
+  s = s + ganglion$stim[,,j]*ganglion$counts[j]
+}
+n = sum(ganglion$counts)
+s = s/n
+```
+
+Spike-Triggered Average
+=======================
+```{r sta, echo=F}
+image(s)
+```
+
+Just one line!
+==============
+```{r sta_one_line}
+image(apply(ganglion$stim, c(1,2), weighted.mean, ganglion$counts))
+```
+
+
+Just one line!
+==============
+```{r}
+start_time = proc.time()
+
+m = apply(ganglion$stim, c(1,2), weighted.mean, ganglion$counts)
+
+proc.time() - start_time
+```
+
+
+And in Parralel
+==============
+```{r}
+library(parallel)
+
+no_cores <- detectCores()
+cl <- makeCluster(no_cores)
+
+start_time <- proc.time()
+
+m = parApply(cl,ganglion$stim, c(1,2), weighted.mean, ganglion$counts)
+
+proc.time() - start_time
+
+stopCluster(cl)
+```
